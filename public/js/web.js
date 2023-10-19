@@ -438,7 +438,7 @@ function objectInfoWindow(id) {
             url: baseUrl + '/api/umkmPlace/' + id,
             dataType: 'json',
             success: function (response) {
-                let data = response.data[0];
+                let data = response.data;
                 let rgid = data.id;
                 let name = data.name;
                 let lat = data.lat;
