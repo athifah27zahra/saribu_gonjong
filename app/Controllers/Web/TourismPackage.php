@@ -400,6 +400,8 @@ class TourismPackage extends ResourcePresenter
         $gallery[] = $fileImg->getFilename();
       }
       $this->galleryTourismPackageModel->add_gallery_api($id, $gallery);
+    } else {
+      $this->galleryTourismPackageModel->delete_gallery_api($id);
     }
     return redirect()->to(base_url('dashboard/tourismPackage') . '/' . $id);
   }

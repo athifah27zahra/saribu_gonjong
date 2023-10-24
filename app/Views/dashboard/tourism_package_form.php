@@ -299,7 +299,9 @@ $edit = in_array('edit', $uri);
     <?php } ?>
   <?php } ?>
 </script>
+<?= $this->endSection() ?>
 
+<?= $this->section('javascript') ?>
 <script src="https://unpkg.com/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.js"></script>
 <script src="https://unpkg.com/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.js"></script>
 <script src="https://unpkg.com/filepond-plugin-image-exif-orientation/dist/filepond-plugin-image-exif-orientation.js"></script>
