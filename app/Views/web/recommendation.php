@@ -29,6 +29,7 @@
                             <h5 class="card-title text-center">Recommendation</h5>
                         </div>
                         <div class="card-body">
+                            
                             <?php $i = 0; ?>
                             <script>clearMarker();clearRadius();clearRoute();</script>
                             <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
@@ -42,7 +43,7 @@
                                     <?php $i = 0; ?>
                                     <?php foreach ($data as $item) : ?>
                                         <div class="carousel-item<?= ($i == 0) ? ' active' : ''; ?>">
-                                            <script>objectMarker("<?= esc($item['id']); ?>", <?= esc($item['lat']); ?>, <?= esc($item['lng']); ?>);</script>
+                                            <script>objectMarker("<?= esc($item['id']); ?>", <?= esc($item['lat']); ?>, <?= esc($item['lng']); ?>, true, null, <?=$item['geoJson'];?>);</script>
                                             <a>
                                                 <img src="<?= base_url('media/photos/' . esc($item['gallery'][0])); ?>" class="d-block w-100" alt="<?= esc($item['name']); ?>" onclick="focusObject(`<?= esc($item['id']); ?>`);">
                                             </a>

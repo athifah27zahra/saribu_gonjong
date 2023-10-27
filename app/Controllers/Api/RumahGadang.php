@@ -80,7 +80,8 @@ class RumahGadang extends ResourceController
         $rumahGadang['gallery'] = $galleries;
         // $rumahGadang['avg_rating'] = $avg_rating;
         // $rumahGadang['reviews'] = $list_review;
-
+        $geom = $rumahGadang['geoJson'];
+        $rumahGadang['geoJson'] = json_decode($geom);
         $response = [
             'data' => $rumahGadang,
             'status' => 200,
@@ -251,6 +252,11 @@ class RumahGadang extends ResourceController
         $request = $this->request->getPost();
         $name = $request['name'];
         $contents = $this->rumahGadangModel->get_rg_by_name_api($name)->getResult();
+        foreach((array)$contents as $dtk=>$dt) {
+            $geom = $contents[$dtk]->geoJson;
+            $contents[$dtk]->geoJson = json_decode($geom);
+
+        }
         $response = [
             'data' => $contents,
             'status' => 200,
@@ -265,6 +271,11 @@ class RumahGadang extends ResourceController
     {
         $request = $this->request->getPost();
         $contents = $this->rumahGadangModel->get_rg_by_radius_api($request)->getResult();
+        foreach((array)$contents as $dtk=>$dt) {
+            $geom = $contents[$dtk]->geoJson;
+            $contents[$dtk]->geoJson = json_decode($geom);
+
+        }
         $response = [
             'data' => $contents,
             'status' => 200,
@@ -290,6 +301,11 @@ class RumahGadang extends ResourceController
             $contents = [];
         }
 
+        foreach((array)$contents as $dtk=>$dt) {
+            $geom = $contents[$dtk]->geoJson;
+            $contents[$dtk]->geoJson = json_decode($geom);
+
+        }
         $response = [
             'data' => $contents,
             'status' => 200,
@@ -310,6 +326,11 @@ class RumahGadang extends ResourceController
             $rumah_gadang_id[] = $facil['rumah_gadang_id'];
         }
         $contents = $this->rumahGadangModel->get_rg_in_id_api($rumah_gadang_id)->getResult();
+        foreach((array)$contents as $dtk=>$dt) {
+            $geom = $contents[$dtk]->geoJson;
+            $contents[$dtk]->geoJson = json_decode($geom);
+
+        }
         $response = [
             'data' => $contents,
             'status' => 200,
@@ -325,6 +346,11 @@ class RumahGadang extends ResourceController
         $request = $this->request->getPost();
         $status = $request['category'];
         $contents = $this->rumahGadangModel->get_rg_by_status_api($status)->getResult();
+        foreach((array)$contents as $dtk=>$dt) {
+            $geom = $contents[$dtk]->geoJson;
+            $contents[$dtk]->geoJson = json_decode($geom);
+
+        }
         $response = [
             'data' => $contents,
             'status' => 200,

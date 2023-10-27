@@ -115,7 +115,7 @@ if(isset($booking[0]['status']) && $booking[0]['status']>1) {
         <tr>
             <td style="text-align: left" width:60%>
                 Payment Instruction<br />
-BNI 12345678 a.n Taufik Nofriandi
+BNI 1328145675 a.n Pokdarwis Sarugo
             </td>
             <td>
                 <div class="amount">

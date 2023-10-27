@@ -1,7 +1,7 @@
 let baseUrl = '';
 let currentUrl = '';
 let web, map;
-let currentLat = 0, currentLng = 0
+let currentLat = 0, currentLng = 0, currentGeo=null;
 let userLat = 0, userLng = 0;
 let selectedShape;
 let drawingManager = new google.maps.drawing.DrawingManager();
@@ -10,7 +10,7 @@ let userInfoWindow = new google.maps.InfoWindow();
 let directionsService, directionsRenderer;
 let userMarker = new google.maps.Marker();
 let destinationMarker = new google.maps.Marker();
-let routeArray = [], circleArray = [], markerArray = {};
+let routeArray = [], circleArray = [], polygonArray = [], markerArray = {};
 let bounds = new google.maps.LatLngBounds();
 let customStyled = [
     {
@@ -306,9 +306,20 @@ function clearMarker() {
     markerArray = {};
 }
 
+function clearPolygon() {
+    for (i in polygonArray) {
+        polygonArray[i].setMap(null);
+    }
+    polygonArray = [];
+}
+
+function setPolygon() {
+
+}
+
 // User set position on map
 function manualPosition() {
-
+    //console.log(polygonArray)
     clearRadius();
     clearRoute();
 
@@ -504,6 +515,11 @@ function objectInfoWindow(id) {
                 let name = data.name;
                 let lat = data.lat;
                 let lng = data.lng;
+                let geom = data.geoJson;
+                if(geom!=null) {
+                    geom = JSON.stringify(geom);
+                    geom = geom.replace(/"/g, '\"');
+                }
                 let price = (data.price == 0) ? 'Free' : 'Rp ' + data.price;
                 let open = data.open.substring(0, data.open.length - 3);
                 let close = data.close.substring(0, data.close.length - 3);
@@ -525,13 +541,13 @@ function objectInfoWindow(id) {
                     '<br><div class="text-center">' +
                     '<a title="Route" class="btn icon btn-outline-primary mx-1" id="routeInfoWindow" onclick="routeTo(' + lat + ', ' + lng + ')"><i class="fa-solid fa-road"></i></a>' +
                     '<a title="Info" class="btn icon btn-outline-primary mx-1" target="_blank" id="infoInfoWindow" href=' + baseUrl + '/web/rumahGadang/' + rgid + '><i class="fa-solid fa-info"></i></a>' +
-                    '<a title="Nearby" class="btn icon btn-outline-primary mx-1" id="nearbyInfoWindow" onclick="openNearby(`' + rgid + '`,' + lat + ',' + lng + ')"><i class="fa-solid fa-compass"></i></a>' +
+                    '<a title="Nearby" class="btn icon btn-outline-primary nIW'+rgid+' mx-1" id="nearbyInfoWindow" onclick="openNearby(`' + rgid + '`,' + lat + ',' + lng + ')" data-geom=\''+geom+'\'><i class="fa-solid fa-compass"></i></a>' +
                     '</div>'
                 contentMobile =
                     '<br><div class="text-center">' +
                     '<a title="Route" class="btn icon btn-outline-primary mx-1" id="routeInfoWindow" onclick="routeTo(' + lat + ', ' + lng + ')"><i class="fa-solid fa-road"></i></a>' +
                     '</div>'
-
+                //console.log(contentButton);
                 if (currentUrl.includes(id)) {
                     if (currentUrl.includes('mobile')) {
                         infoWindow.setContent(content + contentMobile);
@@ -852,7 +868,7 @@ function objectInfoWindow(id) {
 }
 
 // Display marker for loaded object
-function objectMarker(id, lat, lng, anim = true, number = null) {
+function objectMarker(id, lat, lng, anim = true, number = null, geom=null) {
 
     google.maps.event.clearListeners(map, 'click');
     let pos = new google.maps.LatLng(lat, lng);
@@ -899,6 +915,28 @@ function objectMarker(id, lat, lng, anim = true, number = null) {
         infoWindow.open(map, marker);
     });
     markerArray[id] = marker;
+
+    //console.log(geom)
+    if(geom !=null) {
+        const geoObj = JSON.parse(JSON.stringify(geom));
+        //console.log(geoObj['type']);
+        const coords = geoObj.coordinates[0];
+        let polygonCoords = []
+        for (i in coords) {
+            polygonCoords.push(
+                { lat: coords[i][1], lng: coords[i][0] }
+            );
+        }
+        let polygon = new google.maps.Polygon({
+            paths: polygonCoords,
+            fillColor: 'blue',
+            strokeColor: 'blue',
+            editable: false,
+        });
+        polygonArray[id] = polygon;
+        polygon.setMap(map);
+    }
+    
 }
 
 function new01(lat1, lng1, lat2, lng2) {
@@ -957,6 +995,7 @@ function findByName(category) {
     clearRadius();
     clearRoute();
     clearMarker();
+    clearPolygon();
     clearUser();
     destinationMarker.setMap(null);
     google.maps.event.clearListeners(map, 'click');
@@ -1041,6 +1080,7 @@ function radiusSearch({ postfix = null, } = {}) {
     clearRadius();
     clearRoute();
     clearMarker();
+    clearPolygon();
     destinationMarker.setMap(null);
     google.maps.event.clearListeners(map, 'click');
     closeNearby();
@@ -1136,12 +1176,21 @@ function displayFoundObject(response) {
                 '</tr>';
         }
         $('#table-data').append(row);
-        objectMarker(item.id, item.lat, item.lng);
+        //console.log(item)
+        objectMarker(item.id, item.lat, item.lng, true, null, item.geoJson);
         counter++;
     }
 }
 
 function openNearby(id, lat, lng) {
+    //console.log('Open near')
+    
+    var geom = $(".nIW"+id).attr('data-geom');
+    if(geom=='undefinied') {
+        geom==null
+    }
+    geomjs = JSON.parse(geom)
+    //console.log(geom)
     $('#list-rg-col').hide();
     $('#list-ev-col').hide();
     $('#list-rec-col').hide();
@@ -1153,17 +1202,27 @@ function openNearby(id, lat, lng) {
     map.panTo(pos);
 
     document.getElementById('inputRadiusNearby').setAttribute('onchange', 'updateRadius("Nearby"); checkNearby("' + id + '")');
+    document.getElementById('inputRadiusNearby').setAttribute('data-geom',geom)
+    checkNearby(id,geomjs)
 }
 
-function checkNearby(id) {
+function checkNearby(id, geom=null) {
     clearRadius();
     clearRoute();
     clearMarker();
+    clearPolygon();
     clearUser();
     destinationMarker.setMap(null);
     google.maps.event.clearListeners(map, 'click')
 
-    objectMarker(id, currentLat, currentLng, false);
+    if(geom==null) {
+        var geomdump = $("#inputRadiusNearby").attr('data-geom');
+        if(geomdump!='undefinied') {
+            geom = JSON.parse(geomdump)
+        }
+    }
+
+    objectMarker(id, currentLat, currentLng, true, null, geom);
 
     $('#table-cp').empty();
     $('#table-hp').empty();
@@ -1301,7 +1360,8 @@ function displayNearbyResult(category, response) {
             '</td>' +
             '</tr>';
         $('#data-' + category).append(row);
-        objectMarker(item.id, item.lat, item.lng);
+        //console.log(item);
+        objectMarker(item.id, item.lat, item.lng, true, null, item.geoJson);
     }
 }
 
@@ -1533,6 +1593,7 @@ function findByFacility() {
     clearRadius();
     clearRoute();
     clearMarker();
+    clearPolygon();
     clearUser();
     destinationMarker.setMap(null);
     google.maps.event.clearListeners(map, 'click');
@@ -1558,6 +1619,7 @@ function findByCategory(object) {
     clearRadius();
     clearRoute();
     clearMarker();
+    clearPolygon();
     clearUser();
     destinationMarker.setMap(null);
     google.maps.event.clearListeners(map, 'click');
@@ -1680,6 +1742,7 @@ function findByRating(category) {
     clearRadius();
     clearRoute();
     clearMarker();
+    clearPolygon();
     clearUser();
     destinationMarker.setMap(null);
     google.maps.event.clearListeners(map, 'click');

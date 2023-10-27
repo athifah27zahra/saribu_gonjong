@@ -30,6 +30,7 @@
                         <div class="card-body">
                             <div class="table-responsive overflow-auto" id="table-user">
                                 <script>clearMarker();clearRadius();clearRoute();</script>
+                                
                                 <table class="table table-hover mb-0 table-lg">
                                     <thead>
                                     <tr>
@@ -43,7 +44,7 @@
                                         <?php $i = 1; ?>
                                         <?php foreach ($data as $item) : ?>
                                         <tr>
-                                            <script>objectMarker("<?= esc($item['id']); ?>", <?= esc($item['lat']); ?>, <?= esc($item['lng']); ?>); </script>
+                                            <script>objectMarker("<?= esc($item['id']); ?>", <?= esc($item['lat']); ?>, <?= esc($item['lng']); ?>, true, null, <?=$item['geoJson'];?>); </script>
                                             <td><?= esc($i); ?></td>
                                             <td class="fw-bold"><?= esc($item['name']); ?></td>
                                             <td>

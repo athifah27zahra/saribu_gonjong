@@ -245,6 +245,11 @@ class UmkmPlace extends ResourcePresenter
     {
         $request = $this->request->getPost();
         $contents = $this->umkmPlaceModel->get_up_by_radius_api($request)->getResult();
+        foreach((array)$contents as $dtk=>$dt) {
+            $geom = $contents[$dtk]->geoJson;
+            $contents[$dtk]->geoJson = json_decode($geom);
+
+        }
         $response = [
             'data' => $contents,
             'status' => 200,

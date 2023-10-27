@@ -228,6 +228,11 @@ class SouvenirPlace extends ResourcePresenter
     {
         $request = $this->request->getPost();
         $contents = $this->souvenirPlaceModel->get_sp_by_radius_api($request)->getResult();
+        foreach((array)$contents as $dtk=>$dt) {
+            $geom = $contents[$dtk]->geoJson;
+            $contents[$dtk]->geoJson = json_decode($geom);
+
+        }
         $response = [
             'data' => $contents,
             'status' => 200,

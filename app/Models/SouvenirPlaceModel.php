@@ -58,8 +58,9 @@ class SouvenirPlaceModel extends Model
         // $coords = "ST_Y(ST_Centroid({$this->table}.geom)) AS lat, ST_X(ST_Centroid({$this->table}.geom)) AS lng";
         $columns = "{$this->table}.id,{$this->table}.name,{$this->table}.address,{$this->table}.contact_person,{$this->table}.open,{$this->table}.close,{$this->table}.description";
         $vilGeom = "village.id = '1' AND ST_Contains(village.geom, {$this->table}.geom)";
+        $geoJson = "ST_AsGeoJSON({$this->table}.geom) AS geoJson";
         $query = $this->db->table($this->table)
-            ->select("{$columns}, souvenir_place.lat, souvenir_place.lng, {$jarak} as jarak")
+            ->select("{$columns}, souvenir_place.lat, souvenir_place.lng, {$jarak} as jarak,{$geoJson}")
             ->from('village')
             ->where($vilGeom)
             ->having(['jarak <=' => $radius])

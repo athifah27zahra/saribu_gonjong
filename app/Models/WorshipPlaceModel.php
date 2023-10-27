@@ -41,8 +41,9 @@ class WorshipPlaceModel extends Model
         $jarak = "(6371 * acos(cos(radians({$lat})) * cos(radians({$this->table}.lat)) * cos(radians({$this->table}.lng) - radians({$long})) + sin(radians({$lat}))* sin(radians({$this->table}.lat))))";
         $columns = "{$this->table}.id,{$this->table}.name,{$this->table}.address,{$this->table}.building_size,{$this->table}.capacity";
         $vilGeom = "village.id = '1' AND ST_Contains(village.geom, {$this->table}.geom)";
+        $geoJson = "ST_AsGeoJSON(worship_place.geom) AS geoJson";
         $query = $this->db->table($this->table)
-            ->select("{$columns}, worship_place.lat, worship_place.lng, {$jarak} as jarak")
+            ->select("{$columns}, worship_place.lat, worship_place.lng, {$jarak} as jarak, {$geoJson}")
             ->from('village')
             ->where($vilGeom)
             ->having(['jarak <=' => $radius])

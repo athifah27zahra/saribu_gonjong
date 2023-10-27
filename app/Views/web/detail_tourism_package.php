@@ -204,12 +204,13 @@
                       } else {
                         $object = model('tourismPackageModel')->study($id_object);
                       }
-
+                      //echo var_dump($object);
                       $lat_now = isset($object['lat'])?esc($object['lat']):'';
                       $lng_now = isset($object['lng'])?esc($object['lng']):'';
+                      $geo_now = isset($object['geoJson'])?$object['geoJson']:NULL;
                       $objectid = isset($object['id'])?esc($object['id']):'';
                       ?>
-                      objectMarker("<?= $objectid; ?>", <?= $lat_now; ?>, <?= $lng_now; ?>, true, <?= $loop; ?>);
+                      objectMarker("<?= $objectid; ?>", <?= $lat_now; ?>, <?= $lng_now; ?>, true, <?= $loop; ?>, <?=$geo_now?>);
                       <?php 
                         if (1 < $loop) { ?>
                             // new01(<?= $lat_bef; ?>, <?= $lng_bef; ?>, <?= $lat_now; ?>, <?= $lng_now; ?>);

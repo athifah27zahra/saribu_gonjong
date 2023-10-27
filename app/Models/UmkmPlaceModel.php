@@ -42,8 +42,9 @@ class UmkmPlaceModel extends Model
         $jarak = "(6371 * acos(cos(radians({$lat})) * cos(radians({$this->table}.lat)) * cos(radians({$this->table}.lng) - radians({$long})) + sin(radians({$lat}))* sin(radians({$this->table}.lat))))";
         $columns = "{$this->table}.id,{$this->table}.name,{$this->table}.address,{$this->table}.contact_person,{$this->table}.capacity,{$this->table}.open,{$this->table}.close";
         $vilGeom = "village.id = '1' AND ST_Contains(village.geom, {$this->table}.geom)";
+        $geoJson = "ST_AsGeoJSON({$this->table}.geom) AS geoJson";
         $query = $this->db->table($this->table)
-            ->select("{$columns}, umkm_place.lat, umkm_place.lng, {$jarak} as jarak")
+            ->select("{$columns}, umkm_place.lat, umkm_place.lng, {$jarak} as jarak,{$geoJson}")
             ->from('village')
             ->where($vilGeom)
             ->having(['jarak <=' => $radius])

@@ -116,13 +116,12 @@
                 <div class="card-header">
                     <h5 class="card-title">Google Maps</h5>
                 </div>
-
                 <?= $this->include('web/layouts/map-body'); ?>
                 <script>
                     initMapNew(<?= esc($data['lat']); ?>, <?= esc($data['lng']); ?>)
                 </script>
                 <script>
-                    objectMarker("<?= esc($data['id']); ?>", <?= esc($data['lat']); ?>, <?= esc($data['lng']); ?>);
+                    objectMarker("<?= esc($data['id']); ?>", <?= esc($data['lat']); ?>, <?= esc($data['lng']); ?>, true, null, <?=$data['geoJson'];?>);
                 </script>
             </div>
 

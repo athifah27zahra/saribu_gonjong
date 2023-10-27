@@ -147,42 +147,50 @@ class TourismPackageModel extends Model
 
     public function rumah_gadang($id = null)
     {
-        return $this->db->table('rumah_gadang')->select('*')->where('id', $id)->get()->getRowArray();
+        $geoJson = "ST_AsGeoJSON(rumah_gadang.geom) AS geoJson";
+        return $this->db->table('rumah_gadang')->select('rumah_gadang.*,'.$geoJson)->where('id', $id)->get()->getRowArray();
     }
 
     public function umkm_place($id = null)
     {
-        return $this->db->table('umkm_place')->select('*')->where('id', $id)->get()->getRowArray();
+        $geoJson = "ST_AsGeoJSON(umkm_place.geom) AS geoJson";
+        return $this->db->table('umkm_place')->select('umkm_place.*,'.$geoJson)->where('id', $id)->get()->getRowArray();
     }
 
     public function souvenir_place($id = null)
     {
-        return $this->db->table('souvenir_place')->select('*')->where('id', $id)->get()->getRowArray();
+        $geoJson = "ST_AsGeoJSON(souvenir_place.geom) AS geoJson";
+        return $this->db->table('souvenir_place')->select('souvenir_place.*,'.$geoJson)->where('id', $id)->get()->getRowArray();
     }
 
     public function worship_place($id = null)
     {
-        return $this->db->table('worship_place')->select('*')->where('id', $id)->get()->getRowArray();
+        $geoJson = "ST_AsGeoJSON(worship_place.geom) AS geoJson";
+        return $this->db->table('worship_place')->select('worship_place.*,'.$geoJson)->where('id', $id)->get()->getRowArray();
     }
 
     public function history_place($id = null)
     {
-        return $this->db->table('history_place')->select('*')->where('id', $id)->get()->getRowArray();
+        $geoJson = "ST_AsGeoJSON(history_place.geom) AS geoJson";
+        return $this->db->table('history_place')->select('history_place.*,'.$geoJson)->where('id', $id)->get()->getRowArray();
     }
 
     public function tourism_object($id = null)
     {
-        return $this->db->table('tourism_object')->select('*')->where('id', $id)->get()->getRowArray();
+        $geoJson = "ST_AsGeoJSON(tourism_object.geom) AS geoJson";
+        return $this->db->table('tourism_object')->select('tourism_object.*,'.$geoJson)->where('id', $id)->get()->getRowArray();
     }
 
     public function tourism_activity($id = null)
     {
-        return $this->db->table('tourism_activity')->select('*')->where('id', $id)->get()->getRowArray();
+        $geoJson = "ST_AsGeoJSON(tourism_activity.geom) AS geoJson";
+        return $this->db->table('tourism_activity')->select('tourism_activity.*,'.$geoJson)->where('id', $id)->get()->getRowArray();
     }
 
     public function study($id = null)
     {
-        return $this->db->table('study_place')->select('*')->where('id', $id)->get()->getRowArray();
+        $geoJson = "ST_AsGeoJSON(study_place.geom) AS geoJson";
+        return $this->db->table('study_place')->select('study_place.*,'.$geoJson)->where('id', $id)->get()->getRowArray();
     }
 
     function updateSP($packageid,$price) {

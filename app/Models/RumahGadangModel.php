@@ -28,8 +28,9 @@ class RumahGadangModel extends Model
     public function get_all() {
         $columns = "{$this->table}.id,{$this->table}.name,{$this->table}.address,{$this->table}.contact_person,{$this->table}.geom,{$this->table}.video_url,{$this->table}.status ";
         $vilGeom = "village.id = '1' AND ST_Contains(village.geom, {$this->table}.geom)";
+        $geoJson = "ST_AsGeoJSON({$this->table}.geom) AS geoJson";
         $query = $this->db->table($this->table)
-            ->select("{$columns}, rumah_gadang.lat, rumah_gadang.lng")
+            ->select("{$columns}, rumah_gadang.lat, rumah_gadang.lng, {$geoJson}")
             ->from('village')
             ->get();
         return $query;
@@ -38,8 +39,9 @@ class RumahGadangModel extends Model
     public function get_list_rg_api() {
         $columns = "{$this->table}.id,{$this->table}.name,{$this->table}.address,{$this->table}.contact_person,{$this->table}.geom,{$this->table}.video_url";
         $vilGeom = "village.id = '1' AND ST_Contains(village.geom, {$this->table}.geom)";
+        $geoJson = "ST_AsGeoJSON({$this->table}.geom) AS geoJson";
         $query = $this->db->table($this->table)
-            ->select("{$columns}, rumah_gadang.lat, rumah_gadang.lng")
+            ->select("{$columns}, rumah_gadang.lat, rumah_gadang.lng,{$geoJson}")
             ->from('village')
             // ->where($vilGeom)
             ->get();
@@ -63,8 +65,9 @@ class RumahGadangModel extends Model
     public function get_rg_by_name_api($name = null) { 
         $columns = "{$this->table}.id,{$this->table}.name,{$this->table}.address,{$this->table}.contact_person,{$this->table}.description,{$this->table}.video_url";
         $vilGeom = "village.id = '1' AND ST_Contains(village.geom, {$this->table}.geom)";
+        $geoJson = "ST_AsGeoJSON({$this->table}.geom) AS geoJson";
         $query = $this->db->table($this->table)
-            ->select("{$columns}, rumah_gadang.lat, rumah_gadang.lng")
+            ->select("{$columns}, rumah_gadang.lat, rumah_gadang.lng, {$geoJson}")
             ->from('village')
             ->like("{$this->table}.name", $name)
             ->where($vilGeom)
@@ -79,8 +82,9 @@ class RumahGadangModel extends Model
         $jarak = "(6371 * acos(cos(radians({$lat})) * cos(radians({$this->table}.lat)) * cos(radians({$this->table}.lng) - radians({$long})) + sin(radians({$lat}))* sin(radians({$this->table}.lat))))";
         $columns = "{$this->table}.id,{$this->table}.name,{$this->table}.address,{$this->table}.contact_person,{$this->table}.description,{$this->table}.video_url";
         $vilGeom = "village.id = '1' AND ST_Contains(village.geom, {$this->table}.geom)";
+        $geoJson = "ST_AsGeoJSON({$this->table}.geom) AS geoJson";
         $query = $this->db->table($this->table)
-            ->select("{$columns}, rumah_gadang.lat, rumah_gadang.lng, {$jarak} as jarak")
+            ->select("{$columns}, rumah_gadang.lat, rumah_gadang.lng, {$jarak} as jarak,{$geoJson}")
             ->from('village')
             ->where($vilGeom)
             ->having(['jarak <=' => $radius])
@@ -91,8 +95,9 @@ class RumahGadangModel extends Model
     public function get_rg_in_id_api($id = null) {
         $columns = "{$this->table}.id,{$this->table}.name,{$this->table}.address,{$this->table}.open,{$this->table}.close,{$this->table}.price,{$this->table}.contact_person,{$this->table}.status,{$this->table}.recom,{$this->table}.description,{$this->table}.video_url";
         $vilGeom = "village.id = '1' AND ST_Contains(village.geom, {$this->table}.geom)";
+        $geoJson = "ST_AsGeoJSON({$this->table}.geom) AS geoJson";
         $query = $this->db->table($this->table)
-            ->select("{$columns}, rumah_gadang.lat, rumah_gadang.lng")
+            ->select("{$columns}, rumah_gadang.lat, rumah_gadang.lng,{$geoJson}")
             ->from('village')
             ->whereIn('rumah_gadang.id', $id)
             ->where($vilGeom)
@@ -103,8 +108,9 @@ class RumahGadangModel extends Model
     public function get_rg_by_status_api($status = null) {
         $columns = "{$this->table}.id,{$this->table}.name,{$this->table}.address,{$this->table}.open,{$this->table}.close,{$this->table}.price,{$this->table}.contact_person,{$this->table}.status,{$this->table}.recom,{$this->table}.description,{$this->table}.video_url";
         $vilGeom = "village.id = '1' AND ST_Contains(village.geom, {$this->table}.geom)";
+        $geoJson = "ST_AsGeoJSON({$this->table}.geom) AS geoJson";
         $query = $this->db->table($this->table)
-            ->select("{$columns}, rumah_gadang.lat, rumah_gadang.lng")
+            ->select("{$columns}, rumah_gadang.lat, rumah_gadang.lng,{$geoJson}")
             ->from('village')
             ->where("{$this->table}.status", $status)
             ->where($vilGeom)
@@ -114,8 +120,9 @@ class RumahGadangModel extends Model
 
     public function get_recommendation_api() {
         $vilGeom = "village.id = '1' AND ST_Contains(village.geom, {$this->table}.geom)";
+        $geoJson = "ST_AsGeoJSON({$this->table}.geom) AS geoJson";
         $query = $this->db->table($this->table)
-            ->select("rumah_gadang.id, rumah_gadang.name, rumah_gadang.lat, rumah_gadang.lng")
+            ->select("rumah_gadang.id, rumah_gadang.name, rumah_gadang.lat, rumah_gadang.lng,{$geoJson}")
             ->from('village')
             ->where('recom', '1')
             ->where($vilGeom)
